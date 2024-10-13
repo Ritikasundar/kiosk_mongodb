@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>food app</title>
+    </head>
+    <body>
+        <header>
+            <h1>food</h1>
+            <button id="login" href="/login">login</button>
+            <button id="logout" href="/logout">logout</button>
+        </header>
+        <div class="container">
+            <div class="form">
+                <h2>
+                    <input id="name" type="text" placeholder="Food name" />
+                    <input id="price" type="text" placeholder="Price" />
+                    <button id="submit" type="submit" onclick="addFoodItems()">Add Food Item</button>
+                </h2>
+            </div>
+            <div id="food-list"></div>
+        </div>
+
+        <script>
+            async function addFoodItems() {
+                const foodname = document.getElementById('name');
+                const foodprice = document.getElementById('price');
+
+                const name = foodname.value.trim();
+                const price = foodprice.value.trim();
+
+                if (!name || !price) {
+                    alert("Please fill in both fields");
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/add-food', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name: name, cost: price })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert("Food item added successfully");
+                        fetchFoodItems(); // Re-fetch the food items to update the list
+                    } else {
+                        alert("Error adding food");
+                    }
+                } catch (error) {
+                    console.error("Error: " + error);
+                    alert("Error occurred while adding food item");
+                }
+            }
+
+            async function fetchFoodItems() {
+                try {
+                    const response = await fetch('/get-food');
+                    const result = await response.json();
+                    const foodlist = document.getElementById('food-list');
+                    foodlist.innerHTML = "";
+
+                    result.forEach(element => {
+                        foodlist.innerHTML += `
+                            <div id="food-item">
+                                <img src="https://www.dropbox.com/scl/fi/gx359kf8266kvcal1x39o/chapati.png?rlkey=glc1tjmp4txgniqtb61lof1t6&st=2d20zbz3&dl=1">${element.name} - ${element.cost}
+                                <button onclick="editFood('${element._id}', '${element.name}', '${element.cost}')">Edit</button>
+                                <button onclick="deleteFood('${element._id}')">Delete</button>
+                            </div>`;
+                    });
+                } catch (err) {
+                    console.log("Error fetching food items: " + err);
+                }
+            }
+
+            async function editFood(id, name, cost) {
+                const newName = prompt("Enter new food name", name);
+                const newCost = prompt("Enter new cost", cost);
+
+                if (newName && newCost) {
+                    await updateFood(id, newName, newCost);
+                }
+            }
+
+            async function updateFood(id, name, cost) {
+                try {
+                    const response = await fetch(`/update-food/${id}`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ name, cost })
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert("Food item updated");
+                        fetchFoodItems(); // Re-fetch the food items to update the list
+                    } else {
+                        alert("Error updating food");
+                    }
+                } catch (err) {
+                    console.log("Error: " + err);
+                }
+            }
+
+            async function deleteFood(id) {
+                try {
+                    const response = await fetch(`/delete-food/${id}`, {
+                        method: "DELETE",
+                    });
+                    if (response.ok) {
+                        alert("Food item deleted");
+                        fetchFoodItems(); // Re-fetch the food items to update the list
+                    } else {
+                        alert("Error deleting food");
+                    }
+                } catch (err) {
+                    console.log("Error: " + err);
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                fetchFoodItems();
+            });
+        </script>
+    </body>
+</html>

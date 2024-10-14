@@ -2,3 +2,47 @@ npm install -g firebase-tools
 firebase login
 firebase init
 firebase deploy
+
+sudo apt update
+sudo apt install mpich
+mpiexec -version
+#include <mpi.h>
+#include <stdio.h>
+
+int main(int argc, char** argv) {
+    MPI_Init(&argc, &argv); // Initialize MPI environment
+
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size); // Get total number of processes
+
+    int world_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank); // Get rank of the process
+
+    printf("Hello from process %d out of %d!\n", world_rank, world_size);
+
+    MPI_Finalize(); // Finalize MPI environment
+    return 0;
+}
+mpicc -o hello_mpi hello_mpi.c
+mpirun -np 4 ./hello_mpi
+
+
+sudo apt update
+sudo apt install openjdk-11-jdk
+wget https://dlcdn.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz
+tar -xvzf spark-3.5.0-bin-hadoop3.tgz
+# Spark environment
+export SPARK_HOME=/home/tce/spark-3.4.1-bin-hadoop3
+export PATH=$SPARK_HOME/bin:$PATH
+
+# Java environment (if not already set)
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+
+echo "hello world hello spark spark is awesome" > /tmp/wordcount.txt
+val input = sc.textFile("/tmp/wordcount.txt")
+val words = input.flatMap(line => line.split(" "))
+val wordCounts = words.map(word => (word, 1))
+val counts = wordCounts.reduceByKey((x, y) => x + y)
+counts.collect().foreach(println)
+

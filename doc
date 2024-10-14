@@ -94,3 +94,41 @@ counts.collect().foreach(println)
 24)docker logout
 
 
+
+.download mingw from the following link
+https://sourceforge.net/projects/mingw-w64/
+3.extract the folder and paste it in the codeblocks folder
+4.open codeblocks>settings>other compiler options
+Type -fopenmp
+5.go to linker settings and type -lgomp -pthread in other linker options
+
+6.go to toolchain executables and select auto detect,small device c compiler will be detected
+
+7.go to new>project and select console application
+
+8.select c
+9.give a title and select path
+
+10.select finish
+11.click main.c
+
+12.build and run the code
+13.run the following code
+#include <stdio.h>
+#include <omp.h>
+int main(){
+int x;
+x = 2;
+#pragma omp parallel num_threads(2) shared(x)
+{ if (omp_get_thread_num() == 0) {
+x = 5;
+} else {
+printf("1: Thread# %d: x = %d\n", omp_get_thread_num(),x );
+} #pragma omp barrier
+if (omp_get_thread_num() == 0) {
+printf("2: Thread# %d: x = %d\n", omp_get_thread_num(),x );
+} else {
+printf("3: Thread# %d: x = %d\n", omp_get_thread_num(),x ); } } return 0;}
+
+
+

@@ -46,3 +46,51 @@ val wordCounts = words.map(word => (word, 1))
 val counts = wordCounts.reduceByKey((x, y) => x + y)
 counts.collect().foreach(println)
 
+
+
+1)docker –version
+2)docker images
+3)sudo systemctl start docker
+4) sudo systemctl enable docker 
+5)docker pull httpd
+6)docker images 
+7)docker run –it –d httpd
+ 
+8)docker ps
+ 
+8)docker ps -a
+  
+9)docker exec –it container id bash
+10)exit
+ 
+11)docker stop container_id
+ 
+12)docker rm container_id
+ 
+ 
+13)docker stop container_id
+ 
+14)docker kill container_id
+ 
+ 
+15)docker commit container_id geekflare/httpd_image
+ 
+16)docker login
+ 
+17)docker info
+ 
+18)docker history httpd
+ 
+19)docker logs container_id
+ 
+20)docker search helloworld
+ 
+21)docker update --help
+ 
+22)docker volume create
+ 
+23)docker plugin install vieux/sshfs DEBUG=1
+ 
+24)docker logout
+
+
